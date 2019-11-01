@@ -1,6 +1,14 @@
 const { SuccessModel,ErrorModel } = require('../model/resModel')
 const { getList ,getDetail, newBlog, updateBlog, deleteBlog }  = require('../controller/blog')
 
+// 验证是否登陆成功
+// 登陆成功返回undefined，不成功返回一个promise对象
+const loginCheck = req => {
+    if(!req.session.username) {
+        return Promise.resolve(new ErrorModel('用户名或密码不正确'))
+    }
+}
+
 const handleBlogRouter = (req,res) =>{
     // const method = req.method 
     // const url = req.url
@@ -30,7 +38,12 @@ const handleBlogRouter = (req,res) =>{
     }
     // 新建博客
     if(req.method === 'POST' && req.path === '/api/blog/new'){
-        req.body.author = 'zhangsan'
+        const loginResult = loginCheck(req)
+        if(loginResult) {
+            // 有值说明返回的是promise对象，即登陆不成功
+            return new ErrorModel('用户名或密码不正确')
+        }
+        req.body.author = req.session.username
         const result = newBlog(req.body)
         
         return result.then(data => {
@@ -39,6 +52,11 @@ const handleBlogRouter = (req,res) =>{
     } 
     // 更新博客
     if(req.method === 'POST' && req.path === '/api/blog/update'){
+        const loginResult = loginCheck(req)
+        if(loginResult) {
+            // 有值说明返回的是promise对象，即登陆不成功
+            return new ErrorModel('用户名或密码不正确')
+        }
         const id  = req.query.id
         const result = updateBlog(id,req.body)
         return result.then(flag=>{
@@ -53,7 +71,13 @@ const handleBlogRouter = (req,res) =>{
     }
     // 删除博客
     if(req.method === 'POST' && req.path === '/api/blog/delete'){
-        const result = deleteBlog(req.query.id)
+        const loginResult = loginCheck(req)
+        if(loginResult) {
+            // 有值说明返回的是promise对象，即登陆不成功
+            return new ErrorModel('用户名或密码不正确')
+        }
+        const author = req.session.username
+        const result = deleteBlog(req.query.id, author)
         return result.then(flag=>{
             if(flag) {
                 return new SuccessModel('删除博客成功')
