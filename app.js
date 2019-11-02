@@ -21,7 +21,6 @@ const getPostData = (req) => {
             resolve({})
             return
         }
-        console.log(req.headers)
         if(req.headers['content-type'] !== 'application/json'){
             resolve({})
             return
@@ -101,7 +100,6 @@ const serverHandle = (req,res) => {
         }else{
             req.session = sessionData
         }
-        console.log('req.session----', req.session)
         return getPostData(req)
     })// 处理postData
     .then(postData=>{
@@ -110,7 +108,6 @@ const serverHandle = (req,res) => {
          // 处理blog路由数据
         const blogResult = handleBlogRouter(req,res)
         if(blogResult){
-            console.log(blogResult, '---blogResult')
             blogResult.then(blogData => {
                 if(needSetCookie){
                     res.setHeader('Set-Cookie',`userid=${userId};path=/;httpOnly;expires=${getCookieExpires()}`)

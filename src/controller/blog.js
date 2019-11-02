@@ -1,4 +1,5 @@
 const { exec, escape } = require('../db/mysql')
+const xss = require('xss')
 
 const getList = (author,keyword) => {
     author = escape(author)
@@ -26,10 +27,11 @@ const getDetail = (id) => {
 }
 
 const newBlog = (blogData) => {
-    const {title, content, author} = blogData
-    title = escape(title)
-    content = escape(content)
-    author = ascape(author)
+    let {title, content, author} = blogData
+    // 先xss后escape
+    title = escape(xss(title))
+    content = escape(xss(content))
+    author = escape(author)
 
     const createtime = Date.now()
     let sql = `insert into blogs(title,content,createtime,author) values(${title},
@@ -42,7 +44,7 @@ const newBlog = (blogData) => {
 }
 
 const updateBlog = (id,blogData) => {
-    const { title, content } = blogData
+    let { title, content } = blogData
     title = escape(title)
     content = escape(content)
     id = escape(id)
