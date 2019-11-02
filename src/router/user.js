@@ -20,7 +20,7 @@ const handleUserRouter = (req,res) =>{
                 req.session.realname = userData.realname
                 // 设置redis
                 set(req.sessionId, req.session)
-                console.log('req.session', req.session)
+                // console.log('req.session', req.session)
                 return new SuccessModel('登陆成功')
             }
             return new ErrorModel('用户名或密码不正确')
