@@ -17,8 +17,17 @@ const handleBlogRouter = (req,res) =>{
     // 获取博客列表  http://localhost:3000/api/blog/list?keyword=A&author=zhangsan
     if(req.method === 'GET' && req.path === '/api/blog/list'){
 
-        const author = req.query.author || ''
+        let author = req.query.author || ''
         const keyword = req.query.keyword || ''
+        const loginResult = loginCheck(req)
+        // 强制查询当前登陆用户的博客列表
+        if(req.query.isadmin) {
+            if(loginResult) {
+                // 有值说明返回的是promise对象，即登陆不成功
+                return new ErrorModel('用户名或密码不正确')
+            }
+            author = req.session.username
+        }
         const result =  getList(author,keyword)
 
         return result.then(listData=>{

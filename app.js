@@ -110,6 +110,7 @@ const serverHandle = (req,res) => {
          // 处理blog路由数据
         const blogResult = handleBlogRouter(req,res)
         if(blogResult){
+            console.log(blogResult, '---blogResult')
             blogResult.then(blogData => {
                 if(needSetCookie){
                     res.setHeader('Set-Cookie',`userid=${userId};path=/;httpOnly;expires=${getCookieExpires()}`)
