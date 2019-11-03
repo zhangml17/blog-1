@@ -2,7 +2,6 @@ const { exec, escape } = require('../db/mysql')
 const xss = require('xss')
 
 const getList = (author,keyword) => {
-    author = escape(author)
     let sql = `select * from blogs where 1=1 `
     if(author) {
         sql += `and author = ${author} `
